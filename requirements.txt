@@ -1,13 +1,23 @@
-tensorflow
+# tensorflow
+# flask
+# flask-cors
+# numpy
+# pillow
+# opencv-python-headless
+# gunicorn
+# h5py
+# scikit-learn
+# matplotlib
+
+
+# for deploying on render
 flask
 flask-cors
-numpy
-pillow
-opencv-python-headless
 gunicorn
-h5py
-scikit-learn
-matplotlib
+tensorflow-cpu
+pillow
+numpy
+opencv-python-headless
 
 
 # pip install flask flask-cors tensorflow opencv-python pillow numpy

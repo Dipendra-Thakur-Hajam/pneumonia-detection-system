@@ -1,9 +1,18 @@
 import os
+os.environ["TF_CPP_MIN_LOG_LEVEL"] = "2"
+os.environ["OMP_NUM_THREADS"] = "1"
+os.environ["TF_NUM_INTRAOP_THREADS"] = "1"
+os.environ["TF_NUM_INTEROP_THREADS"] = "1"
+
+
 import json
 import base64
 import cv2
 import numpy as np
 import tensorflow as tf
+tf.config.threading.set_intra_op_parallelism_threads(1)
+tf.config.threading.set_inter_op_parallelism_threads(1)
+
 from tensorflow.keras.applications.resnet50 import preprocess_input
 from datetime import datetime
 from flask import Flask, request, jsonify, send_from_directory
@@ -39,7 +48,7 @@ os.makedirs(UPLOAD_PNEUMONIA, exist_ok=True)
 # -------------------------
 print("Loading model...")
 
-model = tf.keras.models.load_model(MODEL_PATH)
+model = tf.keras.models.load_model(MODEL_PATH, compile=False)
 
 print("Model loaded successfully")
 
