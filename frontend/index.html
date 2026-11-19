@@ -1,0 +1,326 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="AI Pneumonia Detection — Deep Learning Analysis of Chest X-Ray Images" />
+  <title>AI Pneumonia Detection</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap"
+    rel="stylesheet" />
+  <link rel="stylesheet" href="./style.css" />
+</head>
+
+<body>
+  <a class="skip-link" href="#main">Skip to content</a>
+
+  <header class="app-header">
+    <div class="container header-inner">
+      <div class="brand">
+        <div class="brand-mark" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none">
+            <path
+              d="M12 2.6c2.8 0 5.1 2.3 5.1 5.1v2.3c0 1.1.5 2.1 1.4 2.8l.4.3c1 .8 1.6 2.1 1.6 3.4 0 2.3-1.9 4.2-4.2 4.2H7.7c-2.3 0-4.2-1.9-4.2-4.2 0-1.3.6-2.6 1.6-3.4l.4-.3c.9-.7 1.4-1.7 1.4-2.8V7.7c0-2.8 2.3-5.1 5.1-5.1Z"
+              opacity=".18" />
+            <path
+              d="M12 3.5c2.3 0 4.2 1.9 4.2 4.2v2.3c0 1.4.6 2.7 1.8 3.6l.4.3c.8.6 1.2 1.5 1.2 2.5 0 1.8-1.5 3.3-3.3 3.3H7.7c-1.8 0-3.3-1.5-3.3-3.3 0-1 .5-1.9 1.2-2.5l.4-.3c1.2-.9 1.8-2.2 1.8-3.6V7.7c0-2.3 1.9-4.2 4.2-4.2Z"
+              stroke="currentColor" stroke-width="1.2" />
+            <path d="M11 8.6h2v2h2v2h-2v2h-2v-2H9v-2h2v-2Z" fill="currentColor" />
+          </svg>
+        </div>
+        <div>
+          <div class="brand-title">AI Pneumonia Detection</div>
+          <div class="brand-subtitle">Deep Learning Analysis of Chest X-Ray Images</div>
+        </div>
+      </div>
+
+      <nav class="top-nav" aria-label="Primary">
+        <a class="nav-link" href="#analyze">Analyze</a>
+        <a class="nav-link" href="#about">About</a>
+        <a class="nav-link" href="#footer">Links</a>
+      </nav>
+    </div>
+  </header>
+
+  <main id="main" class="app-main">
+    <div class="container grid">
+      <section id="analyze" class="panel">
+        <div class="panel-header">
+          <h1 class="panel-title">Upload Chest X-ray</h1>
+          <p class="panel-subtitle">
+            Drag and drop an image or choose a file. Supported formats: JPG, PNG.
+          </p>
+        </div>
+
+        <div class="card upload-card">
+          <div id="dropzone" class="dropzone" role="button" tabindex="0"
+            aria-label="Drag and drop X-ray image or click to browse">
+            <input id="fileInput" class="file-input" type="file" accept="image/*" aria-label="Upload X-ray image" />
+
+            <div class="dz-inner" id="dzIdle">
+              <div class="dz-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none">
+                  <path d="M12 16V7" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" />
+                  <path d="M8.8 10.2 12 7l3.2 3.2" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"
+                    stroke-linejoin="round" />
+                  <path
+                    d="M7 16.2c-2.1 0-3.8-1.7-3.8-3.8S4.9 8.6 7 8.6c.5-2.8 3-4.9 6-4.9 3.4 0 6.1 2.7 6.1 6.1 1.9.2 3.4 1.9 3.4 3.8 0 2.1-1.7 3.8-3.8 3.8H7Z"
+                    stroke="currentColor" stroke-width="1.2" stroke-linejoin="round" opacity=".9" />
+                </svg>
+              </div>
+              <div class="dz-text">
+                <div class="dz-title">Drop X-ray image here</div>
+                <div class="dz-hint">or <span class="dz-link">browse</span> to upload</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Preview area is OUTSIDE the dropzone so Clear button works -->
+          <div id="dzPreview" class="dz-preview-section" hidden>
+            <div class="preview-top">
+              <div class="file-meta">
+                <div class="file-name" id="fileName">—</div>
+                <div class="file-sub" id="fileSub">—</div>
+              </div>
+              <button id="clearBtn" class="btn btn-ghost" type="button">Clear</button>
+            </div>
+
+            <div class="image-comparison">
+              <div class="image-box">
+                <h3>Original X-ray</h3>
+                <div class="comparison-frame">
+                  <img id="previewImg" alt="Uploaded X-ray preview" />
+                </div>
+              </div>
+              <div class="image-box" id="heatmapBox" hidden>
+                <h3>Grad-CAM Heatmap</h3>
+                <div class="comparison-frame">
+                  <img id="heatmapImg" alt="Grad-CAM heatmap visualization" />
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="actions">
+            <button id="chooseBtn" class="btn btn-secondary" type="button">Choose File</button>
+            <button id="analyzeBtn" class="btn btn-primary" type="button" disabled>
+              Analyze X-ray
+            </button>
+          </div>
+
+          <div class="status-row" aria-live="polite">
+            <div id="statusMsg" class="status-msg">No file selected.</div>
+            <div class="status-right">
+              <span class="pill" title="Backend endpoint">API: <code>127.0.0.1:5000</code></span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <aside class="panel">
+        <div class="panel-header">
+          <h2 class="panel-title">Prediction</h2>
+          <p class="panel-subtitle">Results appear here after analysis.</p>
+        </div>
+
+        <div id="resultCard" class="card result-card" hidden>
+          <div class="result-top">
+            <div class="result-label">
+              <span class="dot" id="resultDot" aria-hidden="true"></span>
+              <span class="result-text" id="resultText">—</span>
+            </div>
+            <div class="confidence">
+              <div class="confidence-label">Confidence</div>
+              <div class="confidence-value" id="confidenceValue">—</div>
+            </div>
+          </div>
+
+          <!-- ADDED FEATURE -->
+          <div id="infectionPercent" style="margin-top:8px;font-weight:700;color:#dc2626;"></div>
+
+          <div class="meter" aria-hidden="true">
+            <div id="confidenceBar" class="meter-bar"></div>
+          </div>
+
+          <div class="result-foot" id="resultFoot">This is an AI estimate based on the uploaded image.</div>
+        </div>
+
+        <div id="resultEmpty" class="card empty-card">
+          <div class="empty-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none">
+              <path d="M8 3.8h8a2 2 0 0 1 2 2V20l-6-3-6 3V5.8a2 2 0 0 1 2-2Z" stroke="currentColor" stroke-width="1.2"
+                opacity=".9" />
+              <path d="M9 8.2h6" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" opacity=".85" />
+              <path d="M9 11.2h6" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" opacity=".6" />
+            </svg>
+          </div>
+          <div class="empty-title">No analysis yet</div>
+          <div class="empty-sub">
+            Upload an X-ray and click <strong>Analyze X-ray</strong> to see the predicted class.
+          </div>
+        </div>
+
+        <div id="errorCard" class="card error-card" hidden role="alert">
+          <div class="error-title">Prediction failed</div>
+          <div class="error-sub" id="errorText">Please try again.</div>
+          <button id="retryBtn" class="btn btn-secondary" type="button">Retry</button>
+        </div>
+
+        <div class="report-card">
+
+          <h3>AI Radiology Report</h3>
+
+          <div id="reportText">
+            <p>No analysis performed yet.</p>
+          </div>
+
+          <button id="downloadReportBtn">Download Report</button>
+
+        </div>
+
+      </aside>
+    </div>
+
+    <!-- Model Performance Metrics Section -->
+    <section id="metrics" class="container metrics-section">
+      <div class="panel">
+        <div class="panel-header">
+          <h2 class="panel-title">Model Performance Metrics</h2>
+          <p class="panel-subtitle">F1 Score, Recall, Precision & Accuracy from test set evaluation.</p>
+        </div>
+
+        <div id="metricsContent" class="card metrics-card">
+          <div id="metricsLoading" class="metrics-loading">Loading metrics…</div>
+          <div id="metricsError" class="metrics-error" hidden>
+            <p>Metrics not available. Run <code>evaluate_model.py</code> first.</p>
+          </div>
+
+          <!-- Overall Metrics Grid -->
+          <div id="metricsGrid" class="metrics-grid" hidden>
+            <div class="metric-item metric-accuracy">
+              <div class="metric-icon">
+                <svg viewBox="0 0 24 24" fill="none"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M22 4 12 14.01l-3-3" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              </div>
+              <div class="metric-label">Accuracy</div>
+              <div class="metric-value" id="metricAccuracy">—</div>
+              <div class="metric-bar"><div class="metric-bar-fill" id="barAccuracy"></div></div>
+            </div>
+
+            <div class="metric-item metric-f1">
+              <div class="metric-icon">
+                <svg viewBox="0 0 24 24" fill="none"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg>
+              </div>
+              <div class="metric-label">F1 Score <span class="metric-avg">(weighted)</span></div>
+              <div class="metric-value" id="metricF1">—</div>
+              <div class="metric-bar"><div class="metric-bar-fill metric-bar-f1" id="barF1"></div></div>
+            </div>
+
+            <div class="metric-item metric-recall">
+              <div class="metric-icon">
+                <svg viewBox="0 0 24 24" fill="none"><circle cx="11" cy="11" r="8" stroke="currentColor" stroke-width="2"/><path d="m21 21-4.35-4.35" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+              </div>
+              <div class="metric-label">Recall <span class="metric-avg">(weighted)</span></div>
+              <div class="metric-value" id="metricRecall">—</div>
+              <div class="metric-bar"><div class="metric-bar-fill metric-bar-recall" id="barRecall"></div></div>
+            </div>
+
+            <div class="metric-item metric-precision">
+              <div class="metric-icon">
+                <svg viewBox="0 0 24 24" fill="none"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg>
+              </div>
+              <div class="metric-label">Precision <span class="metric-avg">(weighted)</span></div>
+              <div class="metric-value" id="metricPrecision">—</div>
+              <div class="metric-bar"><div class="metric-bar-fill metric-bar-precision" id="barPrecision"></div></div>
+            </div>
+          </div>
+
+          <!-- Per-class breakdown -->
+          <div id="metricsBreakdown" class="metrics-breakdown" hidden>
+            <h3 class="breakdown-title">Per-Class Breakdown</h3>
+            <div class="breakdown-table-wrap">
+              <table class="breakdown-table">
+                <thead>
+                  <tr>
+                    <th>Class</th>
+                    <th>F1 Score</th>
+                    <th>Recall</th>
+                    <th>Precision</th>
+                  </tr>
+                </thead>
+                <tbody id="breakdownBody"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="about" class="container info">
+      <div class="info-grid">
+        <div class="card info-card">
+          <h3 class="info-title">What is pneumonia?</h3>
+          <p class="info-text">
+            Pneumonia is an infection that inflames the air sacs in one or both lungs. The air sacs
+            may fill with fluid or pus, leading to cough with phlegm, fever, chills, and difficulty
+            breathing. Severity can range from mild to life-threatening.
+          </p>
+          <p class="info-text">
+            This interface helps demonstrate how deep learning models can assist with screening on
+            chest X-rays by estimating the likelihood of pneumonia patterns.
+          </p>
+        </div>
+
+        <div class="card info-card">
+          <h3 class="info-title">Disclaimer</h3>
+          <p class="info-text">
+            <strong>This tool is for research purposes only.</strong> It is not a medical device and
+            should not be used for diagnosis, treatment decisions, or clinical workflows. Always
+            consult qualified healthcare professionals.
+          </p>
+          <ul class="info-list">
+            <li>Predictions depend on image quality and model limitations.</li>
+            <li>False positives and false negatives are possible.</li>
+            <li>Use properly de-identified data when applicable.</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer id="footer" class="app-footer">
+    <div class="container footer-inner">
+      <div class="footer-left">
+        <div class="footer-title">Pneumonia Detection Using Chest X-Ray Images</div>
+        <div class="footer-sub">
+          Built by <span id="authorName"> Dipendra Thakur </span>
+        </div>
+      </div>
+
+      <div class="footer-links">
+        <a class="footer-link" id="githubLink" href="https://github.com/Dipendra-Thakur-Hajam/pneumonia-detection" target="_blank" rel="noreferrer">
+          GitHub
+        </a>
+        <a class="footer-link" href="https://www.kaggle.com/paultimothymooney/chest-xray-pneumonia" target="_blank"
+          rel="noreferrer">
+          Dataset (Kaggle)
+        </a>
+      </div>
+    </div>
+  </footer>
+
+  <div id="loadingOverlay" class="loading-overlay" hidden aria-live="polite" aria-busy="true">
+    <div class="loading-card" role="status" aria-label="Analyzing X-ray">
+      <div class="spinner" aria-hidden="true"></div>
+      <div class="loading-text">
+        <div class="loading-title">Analyzing X-ray…</div>
+        <div class="loading-sub">Running model inference and preparing results.</div>
+      </div>
+    </div>
+  </div>
+
+  <script src="./script.js" defer></script>
+</body>
+
+</html>

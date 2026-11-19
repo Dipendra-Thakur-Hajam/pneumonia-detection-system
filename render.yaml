@@ -1,0 +1,18 @@
+services:
+  - type: web
+    name: pneumonia-detection-app
+    env: python
+    plan: free
+    buildCommand: "apt-get update && apt-get install -y libgl1 libglib2.0-0 libgomp1 && python -m pip install --upgrade pip setuptools wheel && python -m pip install -r requirements.txt"
+    startCommand: "cd backend && gunicorn app:app --bind 0.0.0.0:$PORT --workers 1 --threads 1 --timeout 120"
+    healthCheckPath: /
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.11.8
+      - key: TF_CPP_MIN_LOG_LEVEL
+        value: "2"
+      - key: TF_ENABLE_ONEDNN_OPTS
+        value: "0"
+      # Using headless OpenCV prevents common `libGL.so.1` missing errors on Render's linux servers
+      - key: PIP_EXTRA_INDEX_URL
+        value: "https://pypi.org/simple"

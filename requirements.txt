@@ -1,0 +1,17 @@
+tensorflow
+flask
+flask-cors
+numpy
+pillow
+opencv-python-headless
+gunicorn
+h5py
+scikit-learn
+matplotlib
+
+
+# pip install flask flask-cors tensorflow opencv-python pillow numpy
+
+
+
+#  pip install -r requirements.txt
