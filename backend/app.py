@@ -4,7 +4,7 @@ os.environ["OMP_NUM_THREADS"] = "1"
 os.environ["TF_NUM_INTRAOP_THREADS"] = "1"
 os.environ["TF_NUM_INTEROP_THREADS"] = "1"
 
-
+import gc
 import json
 import base64
 import cv2
@@ -100,7 +100,7 @@ def predict():
         # -------------------------
         # Model Prediction
         # -------------------------
-        prediction = model.predict(processed)
+        prediction = model(processed, training=False).numpy()
 
         prob = float(prediction[0][0])
 
@@ -144,6 +144,10 @@ def predict():
 
         image.save(save_path)
 
+        # Free intermediate tensors and arrays immediately
+        del processed, prediction, heatmap, original, overlay
+        gc.collect()
+
         # -------------------------
         # Response
         # -------------------------
@@ -154,7 +158,7 @@ def predict():
         })
 
     except Exception as e:
-
+        gc.collect()
         return jsonify({
             "error": str(e)
         }), 500
